@@ -16,7 +16,6 @@ export default function InterviewRoom() {
   const [answer, setAnswer] = useState("");
 
   const [secondsRemaining, setSecondsRemaining] = useState(DEFAULT_TIME_LIMIT);
-  const [previousEvaluation, setPreviousEvaluation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -85,7 +84,6 @@ export default function InterviewRoom() {
 
       try {
         const response = await submitAnswer(sessionId, text, timeTaken);
-        setPreviousEvaluation(response.evaluation);
         setProgress(response.progress);
 
         if (response.interview_status === "in_progress" && response.next_question) {
@@ -157,7 +155,7 @@ export default function InterviewRoom() {
       {error && <div className="error-banner">{error}</div>}
 
       <div className="interview-grid">
-        <QuestionPanel question={question} previousEvaluation={previousEvaluation} />
+        <QuestionPanel question={question} />
         <AnswerPanel
           value={answer}
           onChange={setAnswer}
