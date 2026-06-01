@@ -1,9 +1,0 @@
-{
-    "experimentalServices": {
-        "frontend": {
-            "root": "Hack2Hire_Frontend",
-            "routePrefix": "/",
-            "framework": "nextjs"
-        }
-    }
-}
