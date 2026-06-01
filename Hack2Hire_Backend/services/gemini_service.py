@@ -129,11 +129,11 @@ def evaluate_answer(
     response = _model(temperature=0.3, json_mode=True).generate_content(prompt)
     result = _json_from_response_text(response.text)
 
-    for key in ("accuracy", "clarity", "depth", "relevance", "completeness"):
+    for key in ("accuracy", "clarity", "depth", "relevance", "time_efficiency"):
         result[key] = _clamp(result.get(key), 0, 20)
 
     result["total"] = sum(
-        result[key] for key in ("accuracy", "clarity", "depth", "relevance", "completeness")
+        result[key] for key in ("accuracy", "clarity", "depth", "relevance", "time_efficiency")
     )
     result["reasoning"] = str(result.get("reasoning", "")).strip() or "No reasoning provided."
     return result

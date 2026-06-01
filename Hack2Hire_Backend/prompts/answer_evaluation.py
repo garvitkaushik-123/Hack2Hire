@@ -18,7 +18,7 @@ SCORING RUBRIC - score each dimension from 0 to 20:
 2. CLARITY (0-20): How clearly and coherently the answer is communicated.
 3. DEPTH (0-20): Level of detail, examples, and thoroughness.
 4. RELEVANCE (0-20): How well the answer addresses the specific question asked.
-5. COMPLETENESS (0-20): Coverage of all aspects of the question.
+5. TIME_EFFICIENCY (0-20): How well the candidate used the available time. A concise, complete answer delivered quickly scores high. An answer that rambles, is rushed, or wastes time with filler scores low. Consider: the candidate took {time_taken} seconds out of 120 seconds.
 
 DIFFICULTY CALIBRATION:
 - For EASY questions: a correct, clear answer should score 14-16+ per dimension
@@ -31,7 +31,7 @@ Return a JSON object:
   "clarity": <0-20>,
   "depth": <0-20>,
   "relevance": <0-20>,
-  "completeness": <0-20>,
+  "time_efficiency": <0-20>,
   "total": <sum of all five, 0-100>,
   "reasoning": "2-3 sentence explanation of the score, noting strengths and areas for improvement"
 }}"""

@@ -96,7 +96,7 @@ def _empty_evaluation() -> dict[str, Any]:
         "clarity": 0,
         "depth": 0,
         "relevance": 0,
-        "completeness": 0,
+        "time_efficiency": 0,
         "total": 0,
         "reasoning": "No substantive answer provided",
     }

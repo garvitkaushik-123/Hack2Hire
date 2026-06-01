@@ -6,7 +6,7 @@ export default function ScoreCard({ evaluation }) {
     ["Clarity", evaluation.clarity],
     ["Depth", evaluation.depth],
     ["Relevance", evaluation.relevance],
-    ["Completeness", evaluation.completeness],
+    ["Time Efficiency", evaluation.time_efficiency],
   ];
 
   return (

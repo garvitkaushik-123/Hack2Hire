@@ -27,7 +27,7 @@ def test_submit_answer_advances_to_second_category(monkeypatch):
             "clarity": 16,
             "depth": 15,
             "relevance": 15,
-            "completeness": 15,
+            "time_efficiency": 15,
             "total": 77,
             "reasoning": "Strong answer.",
         },

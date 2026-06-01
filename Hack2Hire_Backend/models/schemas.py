@@ -37,7 +37,7 @@ class EvaluationOut(BaseModel):
     clarity: int = Field(ge=0, le=20)
     depth: int = Field(ge=0, le=20)
     relevance: int = Field(ge=0, le=20)
-    completeness: int = Field(ge=0, le=20)
+    time_efficiency: int = Field(ge=0, le=20)
     total: int = Field(ge=0, le=100)
     reasoning: str
 
