@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from models.interview_state import InterviewSession, QuestionRecord, sessions
@@ -11,6 +12,8 @@ from services.gemini_service import (
 )
 from services.resume_parser import extract_text_from_pdf
 from services.scoring import apply_time_penalty, check_termination, is_empty_answer
+
+logger = logging.getLogger(__name__)
 
 
 def _normalize_skill(skill: str) -> str:
@@ -41,6 +44,7 @@ def setup_interview(resume_bytes: bytes, job_description: str) -> InterviewSessi
         matched_skills=_compute_matched_skills(candidate_profile, jd_analysis),
     )
     sessions[session.session_id] = session
+    logger.info(f"Session {session.session_id} created in state '{session.state}'")
     return session
 
 
@@ -56,6 +60,8 @@ def start_interview(session_id: str) -> dict[str, Any]:
     session.current_question = 1
     session.current_difficulty = "easy"
     category = session.get_category_for_question(session.current_question)
+
+    logger.info(f"Session {session_id} started. Generating first question ({session.current_difficulty} {category}).")
 
     question_text = generate_question(
         candidate_profile=session.candidate_profile or {},
@@ -137,7 +143,10 @@ def submit_answer(session_id: str, answer_text: str, time_taken_seconds: int) ->
     session.consecutive_low_scores = (
         session.consecutive_low_scores + 1 if score < 30 else 0
     )
+    old_difficulty = session.current_difficulty
     session.current_difficulty = get_next_difficulty(session.current_difficulty, score)
+
+    logger.info(f"Session {session_id} Q{current_question.number} scored {score}. Difficulty {old_difficulty} -> {session.current_difficulty}. Consecutive low scores: {session.consecutive_low_scores}")
 
     termination_reason = check_termination(
         consecutive_low_scores=session.consecutive_low_scores,
@@ -149,12 +158,15 @@ def submit_answer(session_id: str, answer_text: str, time_taken_seconds: int) ->
         session.state = "terminated"
         session.termination_reason = termination_reason
         interview_status = "terminated"
+        logger.warning(f"Session {session_id} terminated early: {termination_reason}")
     elif session.current_question >= 10:
         session.state = "completed"
         interview_status = "completed"
+        logger.info(f"Session {session_id} completed successfully.")
     else:
         session.current_question += 1
         category = session.get_category_for_question(session.current_question)
+        logger.info(f"Session {session_id} generating Q{session.current_question} ({session.current_difficulty} {category}).")
         question_text = generate_question(
             candidate_profile=session.candidate_profile or {},
             jd_analysis=session.jd_analysis or {},

@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Any
 
@@ -9,6 +10,8 @@ from prompts.jd_analysis import JD_ANALYSIS_PROMPT
 from prompts.question_generation import QUESTION_GENERATION_PROMPT
 from prompts.report_generation import REPORT_GENERATION_PROMPT
 from prompts.resume_analysis import RESUME_ANALYSIS_PROMPT
+
+logger = logging.getLogger(__name__)
 
 
 MODEL_NAME = "gemini-2.0-flash"
@@ -37,6 +40,7 @@ def _json_from_response_text(text: str) -> dict[str, Any]:
     try:
         return json.loads(text.strip())
     except json.JSONDecodeError as exc:
+        logger.error(f"Gemini returned malformed JSON: {text}", exc_info=True)
         raise ValueError(f"Gemini returned malformed JSON: {exc}") from exc
 
 
@@ -50,6 +54,7 @@ def _clamp(value: Any, minimum: int, maximum: int) -> int:
 
 def analyze_resume(resume_text: str) -> dict[str, Any]:
     """Extract structured data from resume text."""
+    logger.info("Calling Gemini to analyze resume")
     response = _model(temperature=0.3, json_mode=True).generate_content(
         RESUME_ANALYSIS_PROMPT.format(resume_text=resume_text)
     )
@@ -58,6 +63,7 @@ def analyze_resume(resume_text: str) -> dict[str, Any]:
 
 def analyze_jd(jd_text: str) -> dict[str, Any]:
     """Extract structured requirements from job description."""
+    logger.info("Calling Gemini to analyze JD")
     response = _model(temperature=0.3, json_mode=True).generate_content(
         JD_ANALYSIS_PROMPT.format(jd_text=jd_text)
     )
@@ -96,6 +102,7 @@ def generate_question(
         covered_topics="; ".join(covered_topics) if covered_topics else "None yet",
     )
 
+    logger.info(f"Calling Gemini to generate question {question_number} ({difficulty} {category})")
     response = _model(temperature=0.7).generate_content(prompt)
     return response.text.strip().strip('"')
 
@@ -118,6 +125,7 @@ def evaluate_answer(
         skills=", ".join(candidate_profile.get("skills", [])) or "Not provided",
         experience_level=f"{candidate_profile.get('total_years_experience', 0)} years",
     )
+    logger.info("Calling Gemini to evaluate answer")
     response = _model(temperature=0.3, json_mode=True).generate_content(prompt)
     result = _json_from_response_text(response.text)
 
@@ -165,6 +173,7 @@ def generate_report(
         difficulty_progression=" -> ".join(difficulty_progression),
         terminated_early=str(terminated_early).lower(),
     )
+    logger.info("Calling Gemini to generate final report")
     response = _model(temperature=0.7, json_mode=True).generate_content(prompt)
     result = _json_from_response_text(response.text)
 
