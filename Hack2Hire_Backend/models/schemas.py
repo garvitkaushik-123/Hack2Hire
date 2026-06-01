@@ -81,6 +81,13 @@ class InterviewSummary(BaseModel):
     total_time: int
 
 
+class LearningResource(BaseModel):
+    title: str
+    url: str
+    type: str  # youtube | article | documentation | course
+    topic: str
+
+
 class ReportResponse(BaseModel):
     readiness_score: int
     readiness_label: str
@@ -89,6 +96,7 @@ class ReportResponse(BaseModel):
     strengths: list[str]
     weaknesses: list[str]
     recommendations: list[str]
+    learning_resources: list[LearningResource] = []
     question_history: list[QuestionHistoryItem]
     difficulty_progression: list[str]
     interview_summary: InterviewSummary

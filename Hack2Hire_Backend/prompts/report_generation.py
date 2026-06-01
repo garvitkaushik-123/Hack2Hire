@@ -29,6 +29,14 @@ Generate a detailed report as a JSON object:
     "specific actionable recommendation 1",
     "specific actionable recommendation 2",
     "specific actionable recommendation 3"
+  ],
+  "learning_resources": [
+    {{
+      "title": "descriptive title of the resource",
+      "url": "full URL to the resource",
+      "type": "youtube | article | documentation | course",
+      "topic": "which weakness or skill gap this addresses"
+    }}
   ]
 }}
 
@@ -36,4 +44,9 @@ GUIDELINES:
 - The readiness_score should reflect overall performance weighted by difficulty
 - skill_breakdown should cover 4-6 key skill areas relevant to the JD
 - strengths and weaknesses should reference specific moments from the interview
-- recommendations should be concrete and actionable"""
+- recommendations should be concrete and actionable
+- learning_resources MUST include 4-6 real, well-known resources that address the candidate's weaknesses:
+  - Include at least 2 YouTube videos (use real channels like freeCodeCamp, Fireship, TechWorld with Nana, NeetCode, Gaurav Sen, Hussein Nasser, etc.)
+  - Include at least 2 articles or documentation links (use real sites like MDN, GeeksforGeeks, Medium, dev.to, official docs, etc.)
+  - Each resource must directly relate to a specific weakness or skill gap identified in the interview
+  - Use REAL URLs that actually exist — do not fabricate links"""

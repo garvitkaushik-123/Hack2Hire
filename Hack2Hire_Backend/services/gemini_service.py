@@ -207,4 +207,22 @@ def generate_report(
         else:
             result[list_key] = [str(item) for item in raw if item]
 
+    # Normalise learning_resources
+    raw_resources = result.get("learning_resources")
+    if not isinstance(raw_resources, list):
+        raw_resources = []
+    normalized_resources = []
+    for entry in raw_resources:
+        if not isinstance(entry, dict):
+            continue
+        normalized_resources.append(
+            {
+                "title": str(entry.get("title") or "Resource"),
+                "url": str(entry.get("url") or ""),
+                "type": str(entry.get("type") or "article"),
+                "topic": str(entry.get("topic") or "General"),
+            }
+        )
+    result["learning_resources"] = normalized_resources
+
     return result

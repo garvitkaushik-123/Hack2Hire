@@ -100,6 +100,10 @@ export default function ResultsPage() {
         <InsightList title="Recommendations" items={report.recommendations} tone="accent" />
       </section>
 
+      {report.learning_resources?.length > 0 && (
+        <LearningResources resources={report.learning_resources} />
+      )}
+
       <DifficultyTrend
         history={report.difficulty_progression || []}
         avgScore={summary.avg_score || 0}
@@ -119,5 +123,41 @@ function InsightList({ title, items = [], tone }) {
         ))}
       </ul>
     </article>
+  );
+}
+
+const TYPE_ICONS = {
+  youtube: "▶️",
+  article: "📝",
+  documentation: "📚",
+  course: "🎓",
+};
+
+function LearningResources({ resources = [] }) {
+  return (
+    <section className="dashboard-section resources-section">
+      <div className="section-heading">
+        <span className="eyebrow">Improve your skills</span>
+        <h2>Recommended Resources</h2>
+      </div>
+      <div className="resources-grid">
+        {resources.map((res, i) => (
+          <a
+            key={i}
+            href={res.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`resource-card resource-${res.type}`}
+          >
+            <span className="resource-type-icon">{TYPE_ICONS[res.type] || "🔗"}</span>
+            <div className="resource-content">
+              <span className="resource-title">{res.title}</span>
+              <span className="resource-topic">{res.topic}</span>
+              <span className="resource-type-label">{res.type}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }
