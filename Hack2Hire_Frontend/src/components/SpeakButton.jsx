@@ -1,9 +1,62 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const isSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
+// Preferred voices ranked by naturalness — first match wins
+const PREFERRED_VOICES = [
+  "Google UK English Female",
+  "Google UK English Male",
+  "Google US English",
+  "Samantha",           // macOS high-quality
+  "Karen",              // macOS Australian
+  "Daniel",             // macOS British
+  "Microsoft Zira",     // Windows
+  "Microsoft David",    // Windows
+];
+
+function getBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  // Try preferred voices first
+  for (const name of PREFERRED_VOICES) {
+    const match = voices.find((v) => v.name === name);
+    if (match) return match;
+  }
+
+  // Fallback: any English voice that isn't the default robotic one
+  const english = voices.filter((v) => v.lang.startsWith("en"));
+  // Prefer voices with "Google", "Natural", "Enhanced", or "Premium" in the name
+  const natural = english.find(
+    (v) => /google|natural|enhanced|premium/i.test(v.name)
+  );
+  if (natural) return natural;
+
+  // Any English voice
+  if (english.length) return english[0];
+
+  // Absolute fallback
+  return voices[0];
+}
+
 export default function SpeakButton({ text }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const voiceRef = useRef(null);
+
+  // Voices load asynchronously in Chrome — listen for the event
+  useEffect(() => {
+    if (!isSupported) return;
+
+    function loadVoice() {
+      voiceRef.current = getBestVoice();
+    }
+
+    loadVoice();
+    window.speechSynthesis.addEventListener("voiceschanged", loadVoice);
+    return () => {
+      window.speechSynthesis.removeEventListener("voiceschanged", loadVoice);
+    };
+  }, []);
 
   const handleClick = useCallback(() => {
     if (!isSupported || !text) return;
@@ -17,9 +70,13 @@ export default function SpeakButton({ text }) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
+    utterance.rate = 0.95;
     utterance.pitch = 1.0;
     utterance.lang = "en-US";
+
+    if (voiceRef.current) {
+      utterance.voice = voiceRef.current;
+    }
 
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
