@@ -1,12 +1,18 @@
 # TakeOff — AI-Powered Mock Interview Platform
 
-> Simulate real-world tech interviews with an adaptive AI interviewer that knows your resume, reads the job description, and adjusts difficulty in real time.
+> From layoff to your dream job. TakeOff simulates real-world tech interviews with an adaptive AI interviewer that knows your resume, reads the job description, and adjusts difficulty in real time — so you walk into the real interview ready.
+
+**Live App:** [www.thetakeoff.tech](https://www.thetakeoff.tech/)
+
+**Demo Video:** [Watch on Google Drive](https://drive.google.com/file/d/1on0I6OEpj05vmpByS25EUq8248HSpL17/view?usp=sharing)
 
 ---
 
-## 🎬 Demo Video
+## What is TakeOff?
 
-**[Watch Demo Video](link-to-video)**
+TakeOff is an AI-powered mock interview platform that creates a personalized, adaptive interview experience for tech candidates. Upload your resume, paste the job description you're targeting, and TakeOff conducts a full 10-question interview that adapts in real time to your performance — just like a real interviewer would.
+
+The platform evaluates every answer across five dimensions (Accuracy, Clarity, Depth, Relevance, and Time Efficiency), dynamically adjusts question difficulty, and generates a comprehensive readiness report with skill breakdowns, strengths, weaknesses, and curated learning resources to help you improve.
 
 ---
 
@@ -14,11 +20,13 @@
 
 - **Resume + JD Parsing** — Upload a PDF resume and paste any job description; Gemini AI extracts skills, experience, and role requirements automatically
 - **Adaptive 10-Question Interview** — Questions span four categories: Technical, Conceptual, Behavioral, and Scenario
-- **Deterministic Difficulty Adaptation** — Difficulty escalates or drops (Easy → Medium → Hard) based on answer scores using explicit rules, not LLM guesswork
+- **Deterministic Difficulty Adaptation** — Difficulty escalates or drops (Easy -> Medium -> Hard) based on answer scores using explicit rules, not LLM guesswork
 - **120-Second Time Limit Per Question** — Real-time countdown enforced; answers submitted after the limit incur a 30% score penalty
 - **Early Termination Logic** — Interview ends early if the candidate scores below threshold three consecutive times or overall average drops below 25/100
-- **5-Dimension Answer Scoring** — Each answer is graded on Accuracy, Clarity, Depth, Relevance, and Completeness (20 points each, 100 total)
-- **Comprehensive Readiness Report** — Final report includes overall score, per-category breakdown, strengths, weaknesses, and actionable improvement recommendations
+- **5-Dimension Answer Scoring** — Each answer is graded on Accuracy, Clarity, Depth, Relevance, and Time Efficiency (20 points each, 100 total)
+- **Comprehensive Readiness Report** — Final report includes overall score, per-skill breakdown, strengths, weaknesses, and actionable improvement recommendations
+- **Curated Learning Resources** — YouTube videos, articles, and documentation targeted at your specific weaknesses
+- **Voice Features** — Listen to questions read aloud (Text-to-Speech) and speak your answers (Speech-to-Text) for a realistic interview feel
 - **Frictionless Demo Flow** — No login or account required; session-based in-memory state
 
 ---
@@ -49,7 +57,7 @@
               ▼                    ▼                       ▼
    ┌──────────────────┐  ┌─────────────────┐  ┌──────────────────────┐
    │  State Machine   │  │    Gemini AI     │  │  In-Memory Session   │
-   │  (orchestration) │  │  (2.0 Flash)    │  │  Store               │
+   │  (orchestration) │  │  (2.5 Flash)    │  │  Store               │
    │                  │  │                  │  │                      │
    │  setup           │  │  Resume Analysis │  │  session_id → state  │
    │  in_progress     │  │  JD Analysis     │  │                      │
@@ -101,7 +109,7 @@
 | Clarity      | 0–20   | How clearly the answer is communicated                |
 | Depth        | 0–20   | Level of detail and insight provided                  |
 | Relevance    | 0–20   | How well the answer addresses the specific question   |
-| Completeness | 0–20   | Coverage of all parts of the question                 |
+| Time Efficiency | 0–20 | How well the candidate used the available time        |
 
 ### Difficulty Adaptation Rules
 
@@ -134,7 +142,7 @@ The interview ends before question 10 if either condition is met:
 |---------------|-------------------------------------------------|
 | Frontend      | React 18, React Router v6, Axios, Vite          |
 | Backend       | FastAPI, Python 3.11+, Pydantic v2, Uvicorn     |
-| AI / LLM      | Google Gemini 2.0 Flash (`google-generativeai`) |
+| AI / LLM      | Google Gemini 2.5 Flash (`google-generativeai`) |
 | PDF Parsing   | PyPDF2                                          |
 | Session Store | In-memory Python dict (no database)             |
 | Styling       | Plain CSS with TakeOff dark navy + orange theme |
@@ -247,8 +255,18 @@ Hack2Hire/
         ├── components/
         │   ├── Timer.jsx
         │   ├── DifficultyBadge.jsx
+        │   ├── DifficultyTrend.jsx
         │   ├── ProgressBar.jsx
-        │   └── ScoreCard.jsx
+        │   ├── ScoreCard.jsx
+        │   ├── SkillBreakdown.jsx
+        │   ├── ReadinessGauge.jsx
+        │   ├── QuestionHistory.jsx
+        │   ├── QuestionPanel.jsx
+        │   ├── AnswerPanel.jsx
+        │   ├── SpeakButton.jsx      # Text-to-Speech for questions
+        │   └── MicButton.jsx        # Speech-to-Text for answers
+        ├── hooks/
+        │   └── useSpeechRecognition.js  # Web Speech API hook
         ├── api/
         │   └── interview.js         # Axios API client with retry logic
         └── styles/
