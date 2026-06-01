@@ -5,15 +5,19 @@ from PyPDF2 import PdfReader
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     """Extract raw text from a PDF file."""
-    reader = PdfReader(BytesIO(file_bytes))
-    text_parts = []
+    try:
+        reader = PdfReader(BytesIO(file_bytes))
+        text_parts = []
 
-    for page in reader.pages:
-        page_text = page.extract_text()
-        if page_text:
-            text_parts.append(page_text)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text_parts.append(page_text)
 
-    text = "\n".join(text_parts)
+        text = "\n".join(text_parts)
+    except Exception as e:
+        raise ValueError(f"Failed to read PDF file. It might be corrupt or empty. ({str(e)})")
+
     if not text.strip():
         raise ValueError("Could not extract text from PDF. The file may be image-based.")
 
