@@ -44,7 +44,7 @@ export default function SetupPage() {
         <div>
           <span className="eyebrow">Adaptive technical practice</span>
           <h1>
-            From layoff to your <span>dream job.</span>
+            From layoff to <span>TakeOff.</span>
           </h1>
           <p>
             Upload your resume, paste the role, and TakeOff will build a focused
