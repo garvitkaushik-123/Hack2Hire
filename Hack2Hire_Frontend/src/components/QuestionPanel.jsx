@@ -1,5 +1,6 @@
 import DifficultyBadge from "./DifficultyBadge.jsx";
 import ScoreCard from "./ScoreCard.jsx";
+import SpeakButton from "./SpeakButton.jsx";
 
 export default function QuestionPanel({ question, previousEvaluation }) {
   return (
@@ -7,6 +8,7 @@ export default function QuestionPanel({ question, previousEvaluation }) {
       <div className="question-kicker">
         <DifficultyBadge difficulty={question?.difficulty} />
         <span>{question?.category || "technical"}</span>
+        <SpeakButton text={question?.question_text} />
       </div>
       <p className="question-body">
         {question?.question_text || "Preparing your first question..."}

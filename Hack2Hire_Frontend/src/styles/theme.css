@@ -545,7 +545,7 @@ main {
 .answer-actions {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
 }
 
 .trend-bar {
@@ -834,6 +834,56 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+/* Voice buttons */
+.voice-btn {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.25rem;
+  justify-content: center;
+  margin-left: auto;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+  width: 2.25rem;
+}
+
+.voice-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--color-white);
+}
+
+.voice-btn.is-speaking {
+  animation: pulse 900ms infinite;
+  border-color: var(--color-orange);
+  color: var(--color-orange);
+}
+
+.button-danger {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.button-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.28);
+}
+
+.button-danger.is-active {
+  animation: pulse 900ms infinite;
+}
+
+.button svg {
+  flex-shrink: 0;
+}
+
+.button span {
+  margin-left: 0.4rem;
 }
 
 @media (max-width: 860px) {

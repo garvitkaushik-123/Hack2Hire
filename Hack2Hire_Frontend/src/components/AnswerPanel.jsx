@@ -1,3 +1,6 @@
+import { useCallback } from "react";
+import MicButton from "./MicButton.jsx";
+
 export default function AnswerPanel({
   value,
   onChange,
@@ -6,6 +9,14 @@ export default function AnswerPanel({
   disabled,
   isSubmitting,
 }) {
+  const handleTranscript = useCallback(
+    (text) => {
+      const separator = value.trim() ? " " : "";
+      onChange(value + separator + text);
+    },
+    [value, onChange]
+  );
+
   return (
     <section className="answer-panel panel">
       <label htmlFor="answer">Your answer</label>
@@ -13,7 +24,7 @@ export default function AnswerPanel({
         id="answer"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Think out loud, include examples, and call out trade-offs."
+        placeholder="Type or use the mic to speak your answer..."
         disabled={disabled}
       />
       <div className="answer-actions">
@@ -25,6 +36,7 @@ export default function AnswerPanel({
         >
           {isSubmitting ? "Evaluating..." : "Submit Answer"}
         </button>
+        <MicButton onTranscript={handleTranscript} disabled={disabled || isSubmitting} />
         <button
           className="button button-muted"
           type="button"
