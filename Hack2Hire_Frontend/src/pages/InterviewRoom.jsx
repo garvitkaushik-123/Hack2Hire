@@ -14,6 +14,7 @@ export default function InterviewRoom() {
   const navigate = useNavigate();
   const [question, setQuestion] = useState(null);
   const [answer, setAnswer] = useState("");
+
   const [secondsRemaining, setSecondsRemaining] = useState(DEFAULT_TIME_LIMIT);
   const [previousEvaluation, setPreviousEvaluation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +29,14 @@ export default function InterviewRoom() {
   });
   const [difficultyHistory, setDifficultyHistory] = useState([]);
   const submittedRef = useRef(false);
+  const answerRef = useRef(answer);
+
+  // Keep answerRef current so the timer callback can read the latest answer
+  // without needing answer in its dependency array (which would restart the
+  // interval on every keystroke).
+  useEffect(() => {
+    answerRef.current = answer;
+  }, [answer]);
 
   useEffect(() => {
     let isMounted = true;
@@ -61,7 +70,10 @@ export default function InterviewRoom() {
   }, [sessionId]);
 
   const handleSubmit = useCallback(
-    async (answerText = answer) => {
+    async (answerText) => {
+      // answerText must always be passed explicitly; default to current ref value
+      // so callers that pass undefined still work correctly.
+      const text = answerText !== undefined ? answerText : answerRef.current;
       if (!question || isSubmitting || submittedRef.current) return;
 
       submittedRef.current = true;
@@ -72,7 +84,7 @@ export default function InterviewRoom() {
       const timeTaken = Math.max(0, limit - secondsRemaining);
 
       try {
-        const response = await submitAnswer(sessionId, answerText, timeTaken);
+        const response = await submitAnswer(sessionId, text, timeTaken);
         setPreviousEvaluation(response.evaluation);
         setProgress(response.progress);
 
@@ -80,6 +92,7 @@ export default function InterviewRoom() {
           await new Promise((resolve) => setTimeout(resolve, 1200));
           setQuestion(response.next_question);
           setAnswer("");
+          answerRef.current = "";
           setSecondsRemaining(response.next_question.time_limit || DEFAULT_TIME_LIMIT);
           setDifficultyHistory((current) => [...current, response.next_question.difficulty]);
           submittedRef.current = false;
@@ -96,7 +109,7 @@ export default function InterviewRoom() {
         setIsSubmitting(false);
       }
     },
-    [answer, isSubmitting, question, secondsRemaining, sessionId]
+    [isSubmitting, question, secondsRemaining, sessionId]
   );
 
   useEffect(() => {
@@ -106,7 +119,8 @@ export default function InterviewRoom() {
       setSecondsRemaining((current) => {
         if (current <= 1) {
           window.clearInterval(timerId);
-          handleSubmit(answer);
+          // Use answerRef so the interval is not recreated on every keystroke.
+          handleSubmit(answerRef.current);
           return 0;
         }
         return current - 1;
@@ -114,7 +128,7 @@ export default function InterviewRoom() {
     }, 1000);
 
     return () => window.clearInterval(timerId);
-  }, [answer, handleSubmit, isSubmitting, question, terminalState]);
+  }, [handleSubmit, isSubmitting, question, terminalState]);
 
   if (isLoading) {
     return <div className="loading-state">Preparing your first question...</div>;

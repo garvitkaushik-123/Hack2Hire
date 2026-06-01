@@ -44,11 +44,11 @@ export default function ResultsPage() {
     return <div className="loading-state">Generating your readiness dashboard...</div>;
   }
 
-  if (error) {
+  if (error || !report) {
     return (
       <div className="empty-state">
         <h1>Report unavailable</h1>
-        <p>{error}</p>
+        <p>{error || "Could not load report. Please try again."}</p>
         <Link className="button button-primary" to="/">Start New Interview</Link>
       </div>
     );

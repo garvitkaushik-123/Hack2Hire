@@ -34,7 +34,10 @@ def _model(temperature: float, json_mode: bool = False) -> genai.GenerativeModel
 
 
 def _json_from_response_text(text: str) -> dict[str, Any]:
-    return json.loads(text.strip())
+    try:
+        return json.loads(text.strip())
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Gemini returned malformed JSON: {exc}") from exc
 
 
 def _clamp(value: Any, minimum: int, maximum: int) -> int:
@@ -163,4 +166,36 @@ def generate_report(
         terminated_early=str(terminated_early).lower(),
     )
     response = _model(temperature=0.7, json_mode=True).generate_content(prompt)
-    return _json_from_response_text(response.text)
+    result = _json_from_response_text(response.text)
+
+    # Normalise required top-level fields so ReportResponse validation never fails
+    result["readiness_score"] = _clamp(result.get("readiness_score", 0), 0, 100)
+    result["readiness_label"] = str(result.get("readiness_label") or "Needs Improvement").strip()
+    result["hiring_readiness"] = str(result.get("hiring_readiness") or "Not Ready").strip()
+
+    # Normalise skill_breakdown entries
+    raw_skills = result.get("skill_breakdown")
+    if not isinstance(raw_skills, list):
+        raw_skills = []
+    normalized_skills = []
+    for entry in raw_skills:
+        if not isinstance(entry, dict):
+            continue
+        normalized_skills.append(
+            {
+                "skill": str(entry.get("skill") or "Unknown"),
+                "score": _clamp(entry.get("score", 0), 0, 100),
+                "label": str(entry.get("label") or "Needs Improvement"),
+            }
+        )
+    result["skill_breakdown"] = normalized_skills
+
+    # Ensure list fields are always lists of strings
+    for list_key in ("strengths", "weaknesses", "recommendations"):
+        raw = result.get(list_key)
+        if not isinstance(raw, list):
+            result[list_key] = []
+        else:
+            result[list_key] = [str(item) for item in raw if item]
+
+    return result
