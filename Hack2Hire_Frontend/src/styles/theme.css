@@ -789,14 +789,18 @@ main {
 
 .history-item {
   box-shadow: none;
+  overflow: hidden;
   padding: 0;
 }
 
 .history-item summary {
   cursor: pointer;
-  font-weight: 800;
+  display: grid;
+  font-weight: 600;
+  gap: 0.75rem;
+  grid-template-columns: 1fr auto;
   list-style: none;
-  padding: 1rem;
+  padding: 1rem 1.25rem;
 }
 
 .history-item summary::-webkit-details-marker {
@@ -804,13 +808,19 @@ main {
 }
 
 .history-item summary span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.5;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .history-item summary strong {
   color: var(--color-orange);
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .history-body {
