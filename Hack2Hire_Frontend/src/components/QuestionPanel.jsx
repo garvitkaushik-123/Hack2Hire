@@ -8,7 +8,9 @@ export default function QuestionPanel({ question, previousEvaluation }) {
         <DifficultyBadge difficulty={question?.difficulty} />
         <span>{question?.category || "technical"}</span>
       </div>
-      <h1>{question?.question_text || "Preparing your first question..."}</h1>
+      <p className="question-body">
+        {question?.question_text || "Preparing your first question..."}
+      </p>
       <ScoreCard evaluation={previousEvaluation} />
     </section>
   );
