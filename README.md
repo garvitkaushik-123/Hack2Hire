@@ -6,6 +6,7 @@
 
 **Demo Video:** [Watch on Google Drive](https://drive.google.com/file/d/1on0I6OEpj05vmpByS25EUq8248HSpL17/view?usp=sharing)
 
+NOTE IN THE VIDEO RECORDING THE VOICE FEATURE IS WORKING BUT THE VOICE IS NOT RECORDED IN RECORDED. YOU CAN TRY IT YOURSELF ON PLATFORM.
 ---
 
 ## What is TakeOff?
